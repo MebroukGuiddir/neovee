@@ -16,7 +16,7 @@ class ArticleController extends Controller
      * @Route("/articles", name="article_create")
      * @Method({"POST"})
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): Response
     {
         $data = $request->getContent();
         $author = $this->getDoctrine()->getRepository('AppBundle:User')->findOneById($data->get('userId'));
@@ -33,7 +33,7 @@ class ArticleController extends Controller
      * @Route("/articles", name="article_search")
      * @Method({"GET"})
      */
-    public function searchAction(Request $request)
+    public function searchAction(Request $request): Response
     {
         $data = $request->getContent();
         return new Response('', Response::HTTP_CREATED);

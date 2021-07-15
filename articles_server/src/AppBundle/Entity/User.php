@@ -4,15 +4,17 @@ namespace AppBundle\Entity;
 
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * User
  *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
-class User
+class User implements  UserInterface
 {
     /**
      * @var int
@@ -24,6 +26,11 @@ class User
     private int $id;
 
     /**
+     * @Assert\Regex(
+     *     pattern="/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/",
+     *     message="not_valid_email"
+     * )
+     *
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
@@ -69,13 +76,16 @@ class User
     /**
      * @ORM\OneToMany(targetEntity="Article", mappedBy="author", cascade={"persist"})
      */
-    private ArrayCollection $articles;
+    private Collection $articles;
+
+
 
 
 
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->id = 0;
     }
 
     /**
@@ -240,5 +250,25 @@ class User
     public function getArticles(): ArrayCollection
     {
         return $this->articles;
+    }
+
+    public function getRoles()
+    {
+        // TODO: Implement getRoles() method.
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function getUsername()
+    {
+        // TODO: Implement getUsername() method.
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }

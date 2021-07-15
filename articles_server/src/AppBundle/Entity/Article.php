@@ -3,6 +3,9 @@
 namespace AppBundle\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Article
@@ -46,10 +49,14 @@ class Article
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", cascade={"all"}, fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="User", cascade={"all"}, fetch="EAGER")
      */
     private ?User $author;
 
+    public function __construct()
+    {
+        $this->id = 0;
+    }
 
     /**
      * Get id
@@ -128,7 +135,7 @@ class Article
     /**
      * Get dateModification
      *
-     * @return string
+     * @return DateTime
      */
     public function getModificationDate(): DateTime
     {
