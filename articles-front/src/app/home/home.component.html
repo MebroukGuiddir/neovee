@@ -1,0 +1,27 @@
+<app-header></app-header>
+<app-write-article></app-write-article>
+<div class="row">
+  <div class="col-3">
+  </div>
+  <div class=" col-6">
+    <!-- Display article list -->
+    <mat-selection-list  class="container" multiple="false"   #articles>
+      <mat-list-option  *ngFor="let article of this.articles$  | async ; let i = index" [value]="article">
+
+          <div class="d-flex w-100 justify-content-between">
+            <h2 matLine class="mb-1 text-blue text-muted">{{ i+1 }} - {{article.title}}</h2>
+          </div>
+          <p matLine class="mb-1 p-limit text-muted">
+            <b> </b>{{article.content}}
+          </p>
+          <small matLine class="text-muted">{{article.modificationDate | dateAgo}}</small>
+          <mat-divider></mat-divider>
+
+      </mat-list-option>
+    </mat-selection-list>
+    <!-- END  article list -->
+  </div>
+  <div class="col-2">
+  </div>
+</div>
+

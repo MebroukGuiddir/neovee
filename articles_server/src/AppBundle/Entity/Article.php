@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,21 +17,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Article
 {
     /**
-     * @var int
+     * @var ?int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id", type="integer", nullable=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private int $id;
+    private ?int $id ;
 
 
     /**
      * @var string
      *
-     * @ORM\Column(name="titre", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255)
      */
-    private string $titre;
+    private string $title;
 
     /**
      * @var string
@@ -44,17 +45,24 @@ class Article
      *
      * @ORM\Column(name="modificationDate", type="datetime")
      */
-    private DateTime $modificationDate;
+    private \DateTime $modificationDate;
 
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", cascade={"all"}, fetch="EAGER")
+     * @var ?Author
+     *
+     * @ORM\ManyToOne(targetEntity="Author", inversedBy="articles")
      */
-    private ?User $author;
+    private ?Author $author = null;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Author", mappedBy="likedArticles")
+     */
+    private ?Collection  $likes;
 
     public function __construct()
-    {
+    {   $this->likes = new  ArrayCollection();
         $this->id = 0;
     }
 
@@ -63,7 +71,7 @@ class Article
      *
      * @return int
      */
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -73,13 +81,13 @@ class Article
     /**
      * Set titre
      *
-     * @param string $titre
+     * @param string $title
      *
      * @return Article
      */
-    public function setTitre(string $titre): self
+    public function setTitle(string $title): self
     {
-        $this->titre = $titre;
+        $this->title = $title;
 
         return $this;
     }
@@ -89,9 +97,9 @@ class Article
      *
      * @return string
      */
-    public function getTitre(): ?string
+    public function getTitle(): ?string
     {
-        return $this->titre;
+        return $this->title;
     }
 
     /**
@@ -123,9 +131,9 @@ class Article
      *
      * @param DateTime $modificationDate
      *
-     * @return Article
+     * @return  Article
      */
-    public function setModificationDate(DateTime $modificationDate): self
+    public function setModificationDate(\DateTime $modificationDate): self
     {
         $this->modificationDate = $modificationDate;
 
@@ -137,7 +145,7 @@ class Article
      *
      * @return DateTime
      */
-    public function getModificationDate(): DateTime
+    public function getModificationDate(): \DateTime
     {
         return $this->modificationDate;
     }
@@ -145,9 +153,9 @@ class Article
     /**
      * Get author
      *
-     * @return User
+     * @return Author
      */
-    public function getAuthor(): ?User
+    public function getAuthor(): ?Author
     {
         return $this->author;
     }
@@ -155,14 +163,24 @@ class Article
     /**
      * Set author
      *
-     * @param User $author
+     * @param Author $author
      *
      * @return Article
      */
-    public function setAuthor(User $author): self
+    public function setAuthor(Author $author): self
     {
         $this->author = $author;
         return $this;
+    }
+
+    /**
+     * Get users likes
+     *
+     * @return Collection
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
     }
 }
 

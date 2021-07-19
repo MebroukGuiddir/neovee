@@ -2,67 +2,75 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\User;
+
+use AppBundle\Entity\Author;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Constraints\Email as EmailConstraint;
 class UserController extends Controller
 {
 
     private UserPasswordEncoderInterface $passwordEncoder;
-
+    private Serializer $serializer;
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new GetSetMethodNormalizer()];
+        $this->serializer = new Serializer($normalizers, $encoders);
+
+
     }
 
 
     /**
-     * @Route("/login", name="user_login")
-     * @Method({"POST"})
+     * @Route("/users/login", name="user_login", methods={"POST"})
      */
-    public function login(Request $request)
+    public function login(Request $request, LoggerInterface $logger)
     {
-        $a = json_decode($request->getContent(), true);
+        //$logger->error('login');
+        $data = json_decode($request->getContent(), true);
+        $user = $this->getDoctrine()->getRepository('AppBundle:Author')->findOneBy(array('email' => $data['email']));
+        if(!$user){
+            return new JsonResponse(['error' => 'Invalid email'],Response::HTTP_UNAUTHORIZED);
+        }
+        elseif ($user->getPassword() !== $data['password'] ){
+            return new JsonResponse(['error' => 'Invalid password'],Response::HTTP_UNAUTHORIZED);
 
-        return $this->json($a);
+        }
+
+        return new JsonResponse(['user'=>$this->serializer->serialize($user, 'json',[AbstractNormalizer::ATTRIBUTES => ['id','email','firstName','lastName','dateCreation']])],Response::HTTP_OK);
     }
     /**
-     * @Route("/signin", name="user_signin")
-     * @Method({"POST"})
+     * @Route("/users/register", name="user_register", methods={"POST"})
      */
-    public function signin(Request $request): Response
+    public function register(Request $request): Response
     {
         try {
-            // get post parameters
+            // get  parameters
             $data = json_decode($request->getContent(), true);
 
-
-           /*
-            // email validation
-            $emailConstraint = new EmailConstraint();
-            $emailConstraint->message = 'Invalid Email';
-            $email = $data["email"];
-
-            $errors = $this->get('validator')->validateValue(
-                $email,
-                $emailConstraint
-            );
-            if($errors) return new Response($errors , Response::HTTP_BAD_REQUEST);
-
-
-            // password validation
-            if( $data["password"] !== $data["passwordConfirm"]){
-                return new Response("Your password and confirmation password do not match." , Response::HTTP_BAD_REQUEST);
+            $user = $this->getDoctrine()->getRepository('AppBundle:Author')->findOneBy(array('email' => $data['email']));
+            if($user){
+                return new JsonResponse(['error' => 'Account already exist'],Response::HTTP_UNAUTHORIZED);
             }
-            */
+
             // create empty user
-            $user = new User();
+            $user = new Author();
 
             // set fields values
             $user->setEmail($data["email"]);
@@ -77,7 +85,8 @@ class UserController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-             return new Response('$user->getId()', Response::HTTP_CREATED);
+
+            return new JsonResponse(['user'=>$this->serializer->serialize($user, 'json',[AbstractNormalizer::ATTRIBUTES => ['id','email','firstName','lastName','dateCreation']])],Response::HTTP_CREATED);
 
 
         } catch (\Exception $exception ){

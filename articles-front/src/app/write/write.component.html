@@ -1,0 +1,39 @@
+<app-header></app-header>
+
+<main>
+  <div class="d-flex flex-row justify-content-between align-items-center">
+    <div class="col-6 p-5">
+      <div  >
+        <p> {{this.accountService.userValue.firstName}}</p>
+        <p>  {{this.accountService.userValue.lastName}}</p>
+      </div>
+      <section  class="articles">
+
+      </section>
+    </div>
+
+    <div class="col-5 p-5">
+
+      <div class="form-control p-2 d-flex flex-column align-items-center justify-content-center">
+        <mat-form-field  appearance="outline">
+          <mat-label>Title</mat-label>
+          <input  [(ngModel)]="title" name="title" matInput>
+        </mat-form-field>
+
+        <mat-tab-group class="p-2">
+          <mat-tab   label="Content">
+            <div class="scrollbar scroll-bar-style p-2"  >
+              <mat-form-field  appearance="outline">
+                <mat-label>Content</mat-label>
+                <textarea rows="20" [(ngModel)]="content" name="content" matInput></textarea>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+          <mat-tab label="Review" ><div class="scrollbar scroll-bar-style" [innerHTML]= "this.content | marked"></div></mat-tab>
+        </mat-tab-group>
+        <button mat-raised-button color="primary">Publish</button>
+      </div>
+
+    </div>
+  </div>
+</main>

@@ -8,9 +8,19 @@ import {MatButtonModule} from "@angular/material/button";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatIconModule} from '@angular/material/icon';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {DialogOverviewWriteArticle, WriteArticleComponent} from "./_components/write-artilce/write-article.component";
-
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from "@angular/material/input";
+import {AngularMaterialModule} from "./_materials/angular-material.module";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import { ErrorInterceptor } from './_helpers';
+import { HomeComponent } from './home/home.component';
+import { WriteComponent } from './write/write.component';
+import { ProfileComponent } from './profile/profile.component';
+import { MarkedPipe } from '@app/_pipes';
+import { DateAgoPipe } from '@app/_pipes';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -19,16 +29,27 @@ import {DialogOverviewWriteArticle, WriteArticleComponent} from "./_components/w
     DialogOverviewLogin,
     DialogOverviewSignin,
     DialogOverviewWriteArticle,
-    WriteArticleComponent
+    WriteArticleComponent,
+    HomeComponent,
+    WriteComponent,
+    ProfileComponent,
+    MarkedPipe,
+    DateAgoPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AngularMaterialModule,
     MatButtonModule,
     MatDialogModule,
+    MatInputModule,
     MatIconModule,
+    MatFormFieldModule,
     BrowserAnimationsModule,
-    FormsModule
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatProgressBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
-class User implements  UserInterface
+class Author implements  UserInterface
 {
     /**
      * @var int
@@ -79,12 +79,19 @@ class User implements  UserInterface
     private Collection $articles;
 
 
+    /**
+     * Many Users can like  Many Articles.
+     * @ORM\ManyToMany(targetEntity="Article", inversedBy="likes")
+     * @ORM\JoinTable(name="likes")
+     */
+    private Collection $likedArticles;
 
 
 
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->likedArticles = new  ArrayCollection();
         $this->id = 0;
     }
 
@@ -103,9 +110,9 @@ class User implements  UserInterface
      *
      * @param string $email
      *
-     * @return User
+     * @return Author
      */
-    public function setEmail(string $email): User
+    public function setEmail(string $email): Author
     {
         $this->email = $email;
 
@@ -127,9 +134,9 @@ class User implements  UserInterface
      *
      * @param string $password
      *
-     * @return User
+     * @return Author
      */
-    public function setPassword(string $password): User
+    public function setPassword(string $password): Author
     {
         $this->password = $password;
 
@@ -151,9 +158,9 @@ class User implements  UserInterface
      *
      * @param string $firstName
      *
-     * @return User
+     * @return Author
      */
-    public function setFirstName(string $firstName): User
+    public function setFirstName(string $firstName): Author
     {
         $this->firstName = $firstName;
 
@@ -175,9 +182,9 @@ class User implements  UserInterface
      *
      * @param string $lastName
      *
-     * @return User
+     * @return Author
      */
-    public function setLastName(string $lastName): User
+    public function setLastName(string $lastName): Author
     {
         $this->lastName = $lastName;
 
@@ -199,9 +206,9 @@ class User implements  UserInterface
      *
      * @param DateTime $dateCreation
      *
-     * @return User
+     * @return Author
      */
-    public function setDateCreation(DateTime $dateCreation): User
+    public function setDateCreation(DateTime $dateCreation): Author
     {
         $this->dateCreation = $dateCreation;
 
@@ -223,9 +230,9 @@ class User implements  UserInterface
      *
      * @param string $token
      *
-     * @return User
+     * @return Author
      */
-    public function setToken(string $token): User
+    public function setToken(string $token): Author
     {
         $this->token = $token;
 
@@ -245,11 +252,21 @@ class User implements  UserInterface
     /**
      * Get articles
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getArticles(): ArrayCollection
+    public function getArticles(): Collection
     {
         return $this->articles;
+    }
+
+    /**
+     * Get liked articles
+     *
+     * @return Collection
+     */
+    public function getLikedArticles(): Collection
+    {
+        return $this->likedArticles;
     }
 
     public function getRoles()

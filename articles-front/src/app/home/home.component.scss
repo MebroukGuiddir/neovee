@@ -1,0 +1,9 @@
+.text-blue{
+  color: #0571b3;
+}
+.p-limit {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* number of lines to show */
+}

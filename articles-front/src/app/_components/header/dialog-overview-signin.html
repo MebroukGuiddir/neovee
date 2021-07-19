@@ -1,2 +1,63 @@
 
+<div *ngIf="onSubmit">
+  <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+</div>
+<div mat-dialog-title class="d-flex flex-row justify-content-end align-items-center ">
 
+  <button mat-icon-button color="accent" aria-label="close button">
+    <mat-icon (click)="onNoClick()">close</mat-icon>
+  </button>
+</div>
+<div mat-dialog-content class="d-flex flex-column justify-content-center align-items-center">
+
+  <div class="login">
+    <h2 class="login-header">Register</h2>
+    <form [formGroup]="registerForm" class="login-container" (ngSubmit)="register()">
+
+      <p [ngClass]="{ 'has-error': isSubmitted && formControls.firstName.errors }">
+        <input type="text" placeholder="First Name" formControlName="firstName">
+      </p>
+
+      <div *ngIf="isSubmitted &&  formControls.firstName.errors" class="help-block">
+        <div *ngIf="formControls.firstName.errors.required">first name is required</div>
+      </div>
+
+      <p [ngClass]="{ 'has-error': isSubmitted && formControls.lastName.errors }">
+        <input type="text" placeholder="Last Name" formControlName="lastName">
+      </p>
+
+      <div *ngIf="isSubmitted &&  formControls.lastName.errors" class="help-block">
+        <div *ngIf="formControls.lastName.errors.required">last name is required</div>
+      </div>
+
+      <p [ngClass]="{ 'has-error': isSubmitted && formControls.email.errors }">
+        <input type="email" placeholder="Email" formControlName="email">
+      </p>
+
+      <div *ngIf="isSubmitted &&  formControls.email.errors" class="help-block">
+        <div *ngIf="formControls.email.errors.required">Email is required</div>
+      </div>
+
+      <p [ngClass]="{ 'has-error': isSubmitted  &&  formControls.password.errors }">
+        <input type="password" placeholder="Password" formControlName="password">
+      </p>
+
+      <div *ngIf="isSubmitted && formControls.password.errors" class="help-block">
+        <div *ngIf="formControls.password.errors.required">Password is required</div>
+      </div>
+
+      <p [ngClass]="{ 'has-error': isSubmitted  &&  formControls.confirmPassword.errors }">
+        <input type="password" placeholder="Confirm Password" formControlName="confirmPassword">
+      </p>
+
+      <div *ngIf="isSubmitted && formControls.confirmPassword.errors" class="help-block">
+        <div *ngIf="formControls.confirmPassword.errors.required">Password is required</div>
+      </div>
+
+      <p>
+        <input type="submit" value="Register">
+      </p>
+
+    </form>
+  </div>
+</div>

@@ -10,4 +10,17 @@ namespace AppBundle\Repository;
  */
 class ArticleRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function findByTitleOrderedByDate($title,$limit,$page)
+    {
+        return  $this->getEntityManager()->getRepository('AppBundle:Article')->createQueryBuilder('a')
+            ->select( array('a.id', 'a.title', 'a.content','a.modificationDate'))
+            ->where('a.title LIKE :word')
+            ->setParameter('word', '%'.$title.'%')
+            ->orderBy('a.modificationDate', 'DESC')
+            ->setFirstResult(($page-1)*$limit)
+            ->setMaxResults($limit)
+            ->getQuery()->getResult();
+
+    }
 }
