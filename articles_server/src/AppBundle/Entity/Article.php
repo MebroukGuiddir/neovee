@@ -5,9 +5,10 @@ namespace AppBundle\Entity;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * Article
  *
@@ -18,7 +19,7 @@ class Article
 {
     /**
      * @var ?int
-     *
+     * @Groups({"simple"})
      * @ORM\Column(name="id", type="integer", nullable=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -36,27 +37,41 @@ class Article
     /**
      * @var string
      *
-     * @ORM\Column(name="contenu", type="string", length=255)
+     * @ORM\Column(name="descrption", type="text")
+     */
+    private string $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="contenu", type="text")
      */
     private string $content;
 
     /**
-     * @var DateTime
+     * @var string
      *
-     * @ORM\Column(name="modificationDate", type="datetime")
+     * @ORM\Column(name="modificationDate", type="string")
      */
-    private \DateTime $modificationDate;
+    private string $modificationDate;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="image", type="text")
+     */
+    private string $image;
 
 
     /**
      * @var ?Author
-     *
+     * @MaxDepth(1)
      * @ORM\ManyToOne(targetEntity="Author", inversedBy="articles")
      */
     private ?Author $author = null;
 
     /**
+     * @MaxDepth(1)
      * @ORM\ManyToMany(targetEntity="Author", mappedBy="likedArticles")
      */
     private ?Collection  $likes;
@@ -102,6 +117,31 @@ class Article
         return $this->title;
     }
 
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Article
+     */
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
     /**
      * Set content
      *
@@ -129,11 +169,11 @@ class Article
     /**
      * Set dateModification
      *
-     * @param DateTime $modificationDate
+     * @param string $modificationDate
      *
      * @return  Article
      */
-    public function setModificationDate(\DateTime $modificationDate): self
+    public function setModificationDate(string $modificationDate): self
     {
         $this->modificationDate = $modificationDate;
 
@@ -143,11 +183,35 @@ class Article
     /**
      * Get dateModification
      *
-     * @return DateTime
+     * @return string
      */
-    public function getModificationDate(): \DateTime
+    public function getModificationDate(): string
     {
         return $this->modificationDate;
+    }
+
+    /**
+     * Set image
+     *
+     * @param string $image
+     *
+     * @return  Article
+     */
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return string
+     */
+    public function getImage(): string
+    {
+        return $this->image;
     }
 
     /**

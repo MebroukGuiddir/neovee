@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {AccountService} from "@app/_services";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {User} from "@app/_models/User";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-header',
@@ -14,7 +15,7 @@ export class HeaderComponent implements OnInit {
 
 
 
-  constructor(public dialog: MatDialog, private accountService: AccountService,) {}
+  constructor(public dialog: MatDialog, private accountService: AccountService) {}
 
   openDialogLogin(): void {
     const dialogRef = this.dialog.open(DialogOverviewLogin, {
@@ -62,10 +63,10 @@ export class HeaderComponent implements OnInit {
   styleUrls: ['./header.component.scss']
 })
 export class DialogOverviewLogin implements OnInit{
-   loginForm= this.formBuilder.group({
-                                       email: ['', Validators.required],
-                                       password: ['', Validators.required]
-                                     });
+  loginForm= this.formBuilder.group({
+    email: ['', Validators.required],
+    password: ['', Validators.required]
+  });
   isSubmitted  =  false;
   constructor(
     private formBuilder: FormBuilder,
@@ -74,7 +75,7 @@ export class DialogOverviewLogin implements OnInit{
     @Inject(MAT_DIALOG_DATA) public data: string) {}
 
   ngOnInit(): void {
-    }
+  }
   get formControls() { return this.loginForm?.controls; }
   onNoClick(): void {
     this.dialogRef.close();
@@ -87,7 +88,11 @@ export class DialogOverviewLogin implements OnInit{
       return;
     }
 
-    this.accountService.login(this.loginForm?.value.email,this.loginForm?.value.password);
+    this.accountService.login(this.loginForm?.value.email,this.loginForm?.value.password).subscribe(value => {
+      this.dialogRef.close();
+    })
+
+
   }
 }
 
@@ -106,10 +111,13 @@ export class DialogOverviewSignin{
   });
   isSubmitted  =  false;
   onSubmit = false;
+  error = "";
   constructor(
     private formBuilder: FormBuilder,
     private accountService: AccountService,
+    private _snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<DialogOverviewLogin>,
+
     @Inject(MAT_DIALOG_DATA) public data: string) {
 
 
@@ -119,32 +127,39 @@ export class DialogOverviewSignin{
   onNoClick(): void {
     this.dialogRef.close();
   }
-
-  async register() {
-    console.log(this.registerForm?.value);
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action,{
+      verticalPosition: "top",
+    });
+  }
+  register() {
     this.isSubmitted = true;
     this.onSubmit = true;
+    this.error = "";
     if (this.registerForm?.invalid) {
       return;
     }
-
-    let user: User = {
-      email: this.registerForm.value.email,
-      firstName: this.registerForm.value.firstName,
-      id: "",
-      lastName: this.registerForm.value.lastName,
-      password: this.registerForm?.value.password
-    }
-      this.accountService.register(user).then( (value) => {
-      this.onSubmit=false;
-      console.log(value);
-      if( value) {
-
+    else{
+      let user: User = {
+        email: this.registerForm.value.email,
+        firstName: this.registerForm.value.firstName,
+        id: "",
+        lastName: this.registerForm.value.lastName,
+        password: this.registerForm?.value.password
       }
+      this.accountService.register(user).subscribe(
+        response => {
+          this.openSnackBar("registered!", "close");
+          this.onSubmit=false;
+          this.dialogRef.close();
+
+        },
+        error =>{
+          this.openSnackBar(error.error.message, "close");
+          this.onSubmit=false;
+        }
+      )
     }
-    );
-
   }
-
 }
 

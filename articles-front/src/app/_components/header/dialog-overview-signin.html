@@ -1,7 +1,5 @@
 
-<div *ngIf="onSubmit">
-  <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
-</div>
+
 <div mat-dialog-title class="d-flex flex-row justify-content-end align-items-center ">
 
   <button mat-icon-button color="accent" aria-label="close button">
@@ -54,9 +52,10 @@
         <div *ngIf="formControls.confirmPassword.errors.required">Password is required</div>
       </div>
 
-      <p>
-        <input type="submit" value="Register">
-      </p>
+
+        <input type="submit" value="Register" [class.spinner]="onSubmit" [disabled]="onSubmit" >
+
+
 
     </form>
   </div>

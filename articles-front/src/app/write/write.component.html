@@ -1,39 +1,48 @@
 <app-header></app-header>
 
-<main>
-  <div class="d-flex flex-row justify-content-between align-items-center">
-    <div class="col-6 p-5">
-      <div  >
-        <p> {{this.accountService.userValue.firstName}}</p>
-        <p>  {{this.accountService.userValue.lastName}}</p>
-      </div>
-      <section  class="articles">
+<mat-toolbar class="d-flex justify-content-around align-content-center">
 
-      </section>
+  <div class="d-flex flex-row">
+   Publish new article
+  </div>
+  <button mat-raised-button color="primary"   aria-label="publish" (click)="publishArticle()">
+    publish
+  </button>
+</mat-toolbar>
+<main class="container d-flex flex-column align-items-center ">
+
+  <div class="d-flex flex-row align-items-center  justify-content-between publication-menu ">
+
+
+
+
+  </div>
+
+  <div class="d-flex flex-row align-items-center image-upload">
+    <div class="file-upload">
+      <div class="image-upload-wrap preview d-flex flex-row align-items-center align-content-center">
+        <input class="file-upload-input" type='file' (change)="fileChangeEvent($event)" accept="image/*" />
+        <img class="file-upload-image" width="100%" height="100%" [src]="cardImageBase64 || 'data:image/png;base64,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'"/>
+        <button *ngIf="cardImageBase64" (click)="removeImage()" class="remove" mat-icon-button color="primary" aria-label="remove">
+          <mat-icon aria-hidden="false" aria-label="remove">close</mat-icon>
+        </button>
+      </div>
     </div>
 
-    <div class="col-5 p-5">
+  </div>
+  <div class="d-flex flex-column align-items-center article w-75 pt-2">
+    <mat-form-field appearance="outline" [style.fontSize]="'10px'" >
+      <mat-label >Title</mat-label>
+      <input  [(ngModel)]="title" name="title" matInput>
+    </mat-form-field>
+    <mat-form-field appearance="outline" [style.fontSize]="'10px'" >
+      <mat-label >Description</mat-label>
+      <input  [(ngModel)]="description" name="description" matInput>
+    </mat-form-field>
+  </div>
+  <div class="w-75">
+  <quill-editor [(ngModel)]="content" [styles]="{height: '30vh',width:'100%'}">
 
-      <div class="form-control p-2 d-flex flex-column align-items-center justify-content-center">
-        <mat-form-field  appearance="outline">
-          <mat-label>Title</mat-label>
-          <input  [(ngModel)]="title" name="title" matInput>
-        </mat-form-field>
-
-        <mat-tab-group class="p-2">
-          <mat-tab   label="Content">
-            <div class="scrollbar scroll-bar-style p-2"  >
-              <mat-form-field  appearance="outline">
-                <mat-label>Content</mat-label>
-                <textarea rows="20" [(ngModel)]="content" name="content" matInput></textarea>
-              </mat-form-field>
-            </div>
-          </mat-tab>
-          <mat-tab label="Review" ><div class="scrollbar scroll-bar-style" [innerHTML]= "this.content | marked"></div></mat-tab>
-        </mat-tab-group>
-        <button mat-raised-button color="primary">Publish</button>
-      </div>
-
-    </div>
+  </quill-editor>
   </div>
 </main>

@@ -59,11 +59,11 @@ class Author implements  UserInterface
     private string $lastName;
 
     /**
-     * @var DateTime
+     * @var string
      *
-     * @ORM\Column(name="dateCreation", type="datetime")
+     * @ORM\Column(name="dateCreation", type="string", length=255)
      */
-    private DateTime $dateCreation;
+    private string $dateCreation;
 
     /**
      * @var string
@@ -204,11 +204,11 @@ class Author implements  UserInterface
     /**
      * Set dateCreation
      *
-     * @param DateTime $dateCreation
+     * @param string $dateCreation
      *
      * @return Author
      */
-    public function setDateCreation(DateTime $dateCreation): Author
+    public function setDateCreation(string $dateCreation): Author
     {
         $this->dateCreation = $dateCreation;
 
@@ -218,9 +218,9 @@ class Author implements  UserInterface
     /**
      * Get dateCreation
      *
-     * @return DateTime
+     * @return string
      */
-    public function getDateCreation(): DateTime
+    public function getDateCreation(): string
     {
         return $this->dateCreation;
     }

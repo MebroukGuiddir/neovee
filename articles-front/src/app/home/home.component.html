@@ -1,27 +1,46 @@
 <app-header></app-header>
-<app-write-article></app-write-article>
-<div class="row">
-  <div class="col-3">
-  </div>
-  <div class=" col-6">
+
+<div class="d-flex justify-content-center    row pt-5">
+
+  <div class="col-6 card shadow">
     <!-- Display article list -->
-    <mat-selection-list  class="container" multiple="false"   #articles>
-      <mat-list-option  *ngFor="let article of this.articles$  | async ; let i = index" [value]="article">
+    <mat-tab-group>
+      <mat-tab label="Last publication">
+        <mat-selection-list  class="container scrollbar" multiple="false"   #articles>
+          <mat-list-option class="mat-list-option-item "   (click)=" gotoArticle(article)" *ngFor="let article of this.articles$  | async ; let i = index" [value]="article">
+            <div class="d-flex flex-row   justify-content-between ">
+              <div class="d-flex flex-column justify-content-start">
+                <h2 matLine class="mb-1 text-blue"> {{article.title}}</h2>
+                <p  class="mb-1 p-limit text-muted"  >
+                  {{article.description}}
+                </p>
+                <small matLine class="text-muted d-flex flex-row justify-content-start"> <mat-icon aria-label="date">today</mat-icon> Published  {{article.modificationDate | dateAgo}}</small>
+              </div>
+              <img [src]="article.image || '../assets/images/default.jpg'" style="width:150px;height:120px;" >
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+        <mat-paginator [length]="200" [pageSizeOptions]="[10, 50, 100]">
+        </mat-paginator>
+        <!-- END  article list -->
+      </mat-tab>
+      <mat-tab label="Most liked"> Content 2 </mat-tab>
+    </mat-tab-group>
 
-          <div class="d-flex w-100 justify-content-between">
-            <h2 matLine class="mb-1 text-blue text-muted">{{ i+1 }} - {{article.title}}</h2>
-          </div>
-          <p matLine class="mb-1 p-limit text-muted">
-            <b> </b>{{article.content}}
-          </p>
-          <small matLine class="text-muted">{{article.modificationDate | dateAgo}}</small>
-          <mat-divider></mat-divider>
 
-      </mat-list-option>
-    </mat-selection-list>
-    <!-- END  article list -->
   </div>
-  <div class="col-2">
+
+  <div class="col-3 d-flex flex-column">
+    <p class="text-small">TOPICS</p>
+    <mat-chip-list class="p-3" aria-label="Fish selection">
+      <mat-chip *ngFor="let topic of topics">{{topic}}</mat-chip>
+    </mat-chip-list>
+    <mat-divider  class="p-3"></mat-divider>
+    <p class="text-small">SEARCH</p>
+    <mat-form-field appearance="outline" class="w-100">
+      <input  matInput [(ngModel)]="search" name="search" placeholder="Search...">
+      <mat-icon style="cursor: pointer" (click)="searchArticles()" matSuffix>search</mat-icon>
+    </mat-form-field>
   </div>
 </div>
 

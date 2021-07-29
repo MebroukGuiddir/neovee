@@ -21,6 +21,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { MarkedPipe } from '@app/_pipes';
 import { DateAgoPipe } from '@app/_pipes';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {QuillModule} from "ngx-quill";
+import { ArticleComponent } from './_components/article/article.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     WriteComponent,
     ProfileComponent,
     MarkedPipe,
-    DateAgoPipe
+    DateAgoPipe,
+    ArticleComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +52,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    QuillModule.forRoot(),
     MatProgressBarModule
   ],
   providers: [],

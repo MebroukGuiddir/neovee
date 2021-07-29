@@ -4,36 +4,42 @@ import {environment} from "@environments/environment";
 import {Article} from "@app/_models/Article";
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable, Subject} from "rxjs";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
+  public article: Article | undefined;
   getArticles$: Observable<Observable<Article[]>>;
   private articlesSubject: Subject<Observable<Article[]>> = new Subject<Observable<Article[]>>();
-  constructor(private http: HttpClient,) {
+  constructor(private http: HttpClient, private _snackBar: MatSnackBar) {
     this.getArticles$ = this.articlesSubject.asObservable();
   }
 
-  createArticle(userId: string, title :string, content: string){
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action,{
+      verticalPosition: "top",
+    });
+  }
+  createArticle(userId: string, title :string, content: string,description:string, image :string){
     const httpHeaders = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Access-Control-Allow-Methods', 'POST')
       .set('Access-Control-Allow-Origin', '*');
-
-    this.http.post<{article:Article}>(`${environment.api}/articles/login`, {userId, title, content }, {headers : httpHeaders})
-      .subscribe(res => {
-
-
+  console.log(userId);
+    this.http.post<{article:Article}>(`${environment.api}/articles`, {userId, title,description, content, image }, {headers : httpHeaders, observe: 'response'})
+      .subscribe(response => {
+          this.openSnackBar("Article published", "close");
         },
         error =>{
-
+          this.openSnackBar(error.error, "close");
         }
       );
 
   }
 
-  getArticles(title: string , size: number, page: number): void{
+  getArticles(title: string , size: number, page: number): Observable<Article[]>{
     const httpHeaders = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Access-Control-Allow-Methods', 'POST')
@@ -42,20 +48,19 @@ export class ArticleService {
       .set('page', String(page))
       .set('size', String(size))
       .set('title', title);
-    this.http.get<any>(`${environment.api}/articles`,   {params: httpParams ,headers : httpHeaders, observe : 'response' })
-      .subscribe(res => {
-          const articles = new Observable<Article[]>(observer => {
-            console.log(res)
-            observer.next(res.body);
-            observer.complete();
-          });
-          this.articlesSubject.next(articles);
+    return this.http.get<Article[]>(`${environment.api}/articles`,   {params: httpParams ,headers : httpHeaders})
 
-        },
-        error =>{
 
-        }
-      );
+  }
+
+  getArticleById(  articleId : string ):Observable<Article>{
+    const httpHeaders = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Access-Control-Allow-Methods', 'POST')
+      .set('Access-Control-Allow-Origin', '*');
+
+    return this.http.get<Article>(`${environment.api}/articles/`+articleId,   { headers : httpHeaders})
+
   }
   getUserArticles( size: number, page: number,userId: string){
     const httpHeaders = new HttpHeaders()

@@ -40,16 +40,16 @@ class UserController extends Controller
     /**
      * @Route("/users/login", name="user_login", methods={"POST"})
      */
-    public function login(Request $request, LoggerInterface $logger)
+    public function login(Request $request,UserPasswordEncoderInterface $encoder, LoggerInterface $logger)
     {
         //$logger->error('login');
         $data = json_decode($request->getContent(), true);
         $user = $this->getDoctrine()->getRepository('AppBundle:Author')->findOneBy(array('email' => $data['email']));
         if(!$user){
-            return new JsonResponse(['error' => 'Invalid email'],Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['message' => 'Invalid email'],Response::HTTP_UNAUTHORIZED);
         }
-        elseif ($user->getPassword() !== $data['password'] ){
-            return new JsonResponse(['error' => 'Invalid password'],Response::HTTP_UNAUTHORIZED);
+        elseif (! $encoder->isPasswordValid($user,$data['password'])){
+            return new JsonResponse(['message' => 'Invalid password'],Response::HTTP_UNAUTHORIZED);
 
         }
 
@@ -58,7 +58,7 @@ class UserController extends Controller
     /**
      * @Route("/users/register", name="user_register", methods={"POST"})
      */
-    public function register(Request $request): Response
+    public function register(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
         try {
             // get  parameters
@@ -66,18 +66,18 @@ class UserController extends Controller
 
             $user = $this->getDoctrine()->getRepository('AppBundle:Author')->findOneBy(array('email' => $data['email']));
             if($user){
-                return new JsonResponse(['error' => 'Account already exist'],Response::HTTP_UNAUTHORIZED);
+                return new JsonResponse(['message' => 'Account already exist'],Response::HTTP_UNAUTHORIZED);
             }
 
             // create empty user
             $user = new Author();
-
+            $encoded = $encoder->encodePassword($user, $data["password"]);
             // set fields values
             $user->setEmail($data["email"]);
             $user->setFirstName($data["firstName"]);
             $user->setLastName($data["lastName"]);
-            $user->setDateCreation(new \DateTime());
-            $user->setPassword($data["password"]);
+            $user->setDateCreation((new \DateTime())->format('Y-m-d H:i:s'));
+            $user->setPassword($encoded);
             $user->setToken("0");
             //$user->setPassword($this->passwordEncoder->encodePassword($user, $data["password"]));
 

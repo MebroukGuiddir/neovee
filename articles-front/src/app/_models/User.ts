@@ -5,7 +5,7 @@ export class User {
   firstName: string;
   lastName: string;
   token?: string;
-
+  image?: string;
   constructor() {
     this.id ="";
     this.email="";
